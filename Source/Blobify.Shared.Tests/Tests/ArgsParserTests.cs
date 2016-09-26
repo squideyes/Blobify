@@ -70,7 +70,7 @@ namespace Blobify.Shared.Tests
 
             var options = parser.Parse(cmd.Split(' '));
 
-            if ((options == null) || !options.GetIsValid())
+            if ((options == null) || !options.IsValid)
                 throw new Exception();
 
             return options;

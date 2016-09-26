@@ -4,43 +4,35 @@ using System.IO;
 
 namespace Blobify.Uploader
 {
-    public class Options : IOptions
+    public class Options : OptionsBase
     {
-        [Option("CONN", "string", 1, false,
-            "The Storage connection-string associated with /CONTAINER. If a /CONN was previously saved to the local machine, it will be overwritten.  In any case, the /CONN will be persisted to the local machine using DPAPI security.")]
-        public string ConnString { get; set; }
-
-        [Option("NOCONN", null, 2, true,
-            "Indicates that any previously saved /CONN should be deleted.")]
-        public bool? NoConnString { get; set; }
-
-        [Option("SOURCE", "path", 3, true,
+        [Option("SOURCE", "path", 1, true, false,
             "The local or UNC path to draw blobifiable files from.")]
         public string Source { get; set; }
 
-        [Option("FILTER", "regex", 3, false,
-            "A regular expression to filter /SOURCE against.  If a filter is not supplied, then all of the files found in /SOURCE will be blobified.")]
+        [Option("REGEX", "pattern", 1, false, false,
+            "A regular expression to filter /SOURCE against.  If a regex is supplied, then all of the files found in /SOURCE will be blobified.")]
         public string Filter { get; set; }
 
-        [Option("NOSUBFOLDERS", null, 3, false,
+        [Option("RECURSE", null, 1, false, false,
             "If present, the sub-folders under /SOURCE will not searched for blobifyable files.")]
         public bool? NoSubFolders { get; set; }
 
-        [Option("CONTAINER", "name", 3, true,
-            "The container within /CONN to upload the blobified files to.")]
+        [Option("CONTAINER", "name", 1, true, false,
+            "The container within /CONN to upload the blobified files to. A container name must be 3 to 63 characters long, start with a lowercase letter or number, and can only contain lowercase letters, numbers, and the dash (-) character.")]
         public string Container { get; set; }
 
-        [Option("LOCALPATH", "path", 3, false,
+        [Option("PATH", "folders", 1, false, false,
             "The \"local-path\" within /CONTAINER to upload the blobified files to.  If ommited then the blobified files will be uploaded to the root of /CONTAINER. NOTE: /LOCALPATH will be converted to upper-case, by convention.")]
         public string LocalPath { get; set; }
 
-        [Option("PARAMS", "file", 4, true,
-            "A file that contains one or more of the above parameters.  Whitespace, such as spaces and newlines, will be ignored, as will per-line comments prefixed by a double-slash.")]
-        public string ParamsFile { get; set; }
+        [Option("CONN", "string", 2, true, false,
+            "The Storage connection-string associated with /CONTAINER. If a /CONN was previously saved to the local machine, it will be overwritten.  In any case, the /CONN will be persisted to the local machine using DPAPI security.")]
+        public string ConnString { get; set; }
 
-        [Option("LOGLEVEL", "level", 0, false,
-            "The minimum logging level (Trace, Debug, Info, Warn, Error or Fatal); by default: Info.")]
-        public LogLevel? LogLevel { get; set; }
+        [Option("NOCONN", null, 3, true, false,
+            "Indicates that any previously saved /CONN should be deleted.")]
+        public bool? NoConnString { get; set; }
 
         private bool BlobifyFieldsEmpty()
         {
@@ -59,7 +51,7 @@ namespace Blobify.Uploader
             if (!string.IsNullOrWhiteSpace(LocalPath))
                 return false;
 
-            if (LogLevel.HasValue)
+            if (LogLevel != null)
                 return false;
 
             return true;
@@ -72,7 +64,7 @@ namespace Blobify.Uploader
             return CloudStorageAccount.TryParse(ConnString, out account);
         }
 
-        public bool GetIsValid()
+        protected override bool GetIsValid()
         {
             if (string.IsNullOrWhiteSpace(ParamsFile))
             {

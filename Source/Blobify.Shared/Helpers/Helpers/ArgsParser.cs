@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace Blobify.Shared.Helpers
 {
-    public class ArgsParser<O> where O : IOptions, new()
+    public class ArgsParser<O> where O : OptionsBase, new()
     {
         public class Spec
         {
@@ -42,47 +42,55 @@ namespace Blobify.Shared.Helpers
             sb.AppendLine(new string('=', WIDTH));
             sb.AppendLine();
 
+            var groups = new SortedDictionary<int, List<OptionAttribute>>();
+
+            foreach (var option in options)
+            {
+                if (!groups.ContainsKey(option.GroupId))
+                    groups.Add(option.GroupId, new List<OptionAttribute>());
+
+                groups[option.GroupId].Add(option);
+            }
+
+            foreach (var groupId in groups.Keys)
+                groups[groupId].Add(GetLogLevel(groupId));
+
+            groups.Add(groups.Keys.Count + 1, new List<OptionAttribute>());
+
+            groups[groups.Keys.Last()].Add(new OptionAttribute("PARAMS", "file", 6, true, false,
+                "A file that contains one or more of the above parameters.  Whitespace, such as spaces and newlines, will be ignored, as will per-line comments prefixed by a double-slash."));
+
             var cmd = new StringBuilder();
 
             cmd.Append(appInfo.Product + " ");
 
-            int? lastGroupId = null;
+            var firstGroup = true;
 
-            foreach (var option in options)
+            foreach (var groupId in groups.Keys)
             {
-                if (option.GroupId == 0)
-                    continue;
+                if (!firstGroup)
+                    cmd.Append(" or ");
 
-                if (option.GroupId != lastGroupId)
-                {
-                    if (lastGroupId.HasValue)
-                        cmd.Remove(cmd.Length - 1, 1).Append("] or ");
+                firstGroup = false;
 
+                if (groups[groupId].Count > 1)
                     cmd.Append("[");
-                }
 
-                switch (option.Kind)
+                var firstOption = true;
+
+                foreach (var option in groups[groupId])
                 {
-                    case OptionKind.OptionalKeyOnly:
-                        cmd.Append($"{{/{option.Token}}}");
-                        break;
-                    case OptionKind.OptionalKeyValue:
-                        cmd.Append($"{{/{option.Token}:}}");
-                        break;
-                    case OptionKind.RequiredKeyOnly:
-                        cmd.Append($"</{option.Token}>");
-                        break;
-                    case OptionKind.RequiredKeyValue:
-                        cmd.Append($"</{option.Token}:>");
-                        break;
+                    if (!firstOption)
+                        cmd.Append(' ');
+
+                    firstOption = false;
+
+                    cmd.Append(GetWrappedToken(option));
                 }
 
-                cmd.Append(' ');
-
-                lastGroupId = option.GroupId;
+                if (groups[groupId].Count > 1)
+                    cmd.Append("]");
             }
-
-            cmd.Append("]");
 
             var cmdString = cmd.ToString();
 
@@ -98,23 +106,44 @@ namespace Blobify.Shared.Helpers
 
             sb.AppendLine();
 
-            foreach (var option in options)
+            foreach (var groupId in groups.Keys)
             {
-                if (option.GroupId != lastGroupId)
-                {
-                    sb.AppendLine(new string('-', WIDTH));
-                    sb.AppendLine();
-                }
+                sb.AppendLine(new string('-', WIDTH));
+                sb.AppendLine();
 
-                ShowOptionHelp(sb, option);
+                firstGroup = false;
 
-                lastGroupId = option.GroupId;
+                foreach (var option in groups[groupId])
+                    ShowOptionHelp(sb, option);
             }
 
             sb.AppendLine(new string('=', WIDTH));
             sb.AppendLine();
 
             Console.Write(sb.ToString());
+        }
+
+        private static OptionAttribute GetLogLevel(int groupId)
+        {
+            return new OptionAttribute("LOGLEVEL", "level", groupId, false, false,
+                "The minimum logging level (Trace, Debug, Info, Warn, Error or Fatal); by default: Info.");
+        }
+
+        private static string GetWrappedToken(OptionAttribute option)
+        {
+            switch (option.Kind)
+            {
+                case OptionKind.OptionalKeyOnly:
+                    return $"{{/{option.Token}}}";
+                case OptionKind.OptionalKeyValue:
+                    return $"{{/{option.Token}:}}";
+                case OptionKind.RequiredKeyOnly:
+                    return $"</{option.Token}>";
+                case OptionKind.RequiredKeyValue:
+                    return $"</{option.Token}:>";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(option.Kind));
+            }
         }
 
         private static void ShowOptionHelp(StringBuilder sb, OptionAttribute option)
@@ -232,7 +261,7 @@ namespace Blobify.Shared.Helpers
                 }
             }
 
-            if (!options.GetIsValid())
+            if (!options.IsValid)
                 return default(O);
 
             return options;

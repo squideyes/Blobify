@@ -55,6 +55,10 @@
       <HintPath>..\..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NLog.4.3.9\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Spatial, Version=5.6.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -76,6 +80,7 @@
     <Compile Include="Enums\MiscExtenders.cs" />
     <Compile Include="Helpers\Attributes\OptionAttribute.cs" />
     <Compile Include="Helpers\Enums\OptionKind.cs" />
+    <Compile Include="Helpers\Primatives\OptionsBase.cs" />
     <Compile Include="Logging\Severity.cs" />
     <Compile Include="Helpers\Exceptions\BadFieldException.cs" />
     <Compile Include="Helpers\Extenders\AssemblyExtenders.cs" />
@@ -85,7 +90,6 @@
     <Compile Include="Helpers\Helpers\AppInfo.cs" />
     <Compile Include="Helpers\Helpers\ArgsParser.cs" />
     <Compile Include="Helpers\Helpers\Contract.cs" />
-    <Compile Include="Helpers\Interfaces\IOptions.cs" />
     <Compile Include="Helpers\Primatives\TokenValue.cs" />
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Models\AlertInfo.cs" />
