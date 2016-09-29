@@ -83,7 +83,6 @@
     <Compile Include="Helpers\Attributes\OptionAttribute.cs" />
     <Compile Include="Helpers\Enums\OptionKind.cs" />
     <Compile Include="Helpers\Primatives\OptionsBase.cs" />
-    <Compile Include="Logging\Severity.cs" />
     <Compile Include="Helpers\Exceptions\BadFieldException.cs" />
     <Compile Include="Helpers\Extenders\AssemblyExtenders.cs" />
     <Compile Include="Helpers\Extenders\EnumExtenders.cs" />
@@ -93,9 +92,7 @@
     <Compile Include="Helpers\Helpers\ArgsParser.cs" />
     <Compile Include="Helpers\Helpers\Contract.cs" />
     <Compile Include="Helpers\Primatives\TokenValue.cs" />
-    <Compile Include="Logging\Logger.cs" />
     <Compile Include="Models\AlertInfo.cs" />
-    <Compile Include="Logging\LogEntity.cs" />
     <Compile Include="Models\ControlEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
