@@ -61,83 +61,65 @@ namespace Blobify.Shared.Tests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /SOURCE:C:\Some Folder /APPID:XXX /BUILD:App_SomeCo.SomeApp_20160304.1 /HOSTS:ABC123,XYZ987 /ALERT:somedude@someco.com;otherdude@someco.com.
+        ///   Looks up a localized string similar to /SOURCE:C:\Windows /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN.
         /// </summary>
-        public static string BadAppIdArgs {
+        public static string GoodAllBlobifyArgs {
             get {
-                return ResourceManager.GetString("BadAppIdArgs", resourceCulture);
+                return ResourceManager.GetString("GoodAllBlobifyArgs", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /SOURCE: C:\Some Folder /APPID: JOBS /BUILD: App_SomeCo.SomeApp_20160304.1 /HOSTS: ABC123 , XYZ987 /ALERT: somedude@someco.com ; otherdude@someco.com.
+        ///   Looks up a localized string similar to /CONN:DefaultEndpointsProtocol=https;AccountName=someco;AccountKey=O21totdNsyxIgHMPIq0jVyBhjxkikfeVkOPfCzzdExvc9Yl4VxTXuC0VBfu275etxQnY/tzBqArmTwpoQyPn0w==;.
         /// </summary>
-        public static string GoodArgsWithSpaces {
+        public static string GoodConnNoLogLevelArgs {
             get {
-                return ResourceManager.GetString("GoodArgsWithSpaces", resourceCulture);
+                return ResourceManager.GetString("GoodConnNoLogLevelArgs", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /CONN:DefaultEndpointsProtocol=https;AccountName=someco;AccountKey=O21totdNsyxIgHMPIq0jVyBhjxkikfeVkOPfCzzdExvc9Yl4VxTXuC0VBfu275et1QnY/tzBqArmTwpoQyPn0w==;.
+        ///   Looks up a localized string similar to /CONN:DefaultEndpointsProtocol=https;AccountName=someco;AccountKey=O21totdNsyxIgHMPIq0jVyBhjxkikfeVkOPfCzzdExvc9Yl4VxTXuC0VBfu275etxQnY/tzBqArmTwpoQyPn0w==; /LOGLEVEL:WARN.
         /// </summary>
-        public static string GoodConnArgs {
+        public static string GoodConnWithLogLevelArgs {
             get {
-                return ResourceManager.GetString("GoodConnArgs", resourceCulture);
+                return ResourceManager.GetString("GoodConnWithLogLevelArgs", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /SOURCE:C:\Some Folder /APPID:JOBS /BUILD:App_SomeCo.SomeApp_20160304.1 /HOSTS:ABC123,XYZ987 /ALERT:somedude@someco.com;otherdude@someco.com.
+        ///   Looks up a localized string similar to /SOURCE:C:\Windows /CONTAINER:files.
         /// </summary>
-        public static string GoodDeployArgs {
+        public static string GoodMinimalBlobifyArgs {
             get {
-                return ResourceManager.GetString("GoodDeployArgs", resourceCulture);
+                return ResourceManager.GetString("GoodMinimalBlobifyArgs", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /SOURCE:C:\Some Folder /APPID:JOBS /BUILD:App_SomeCo.SomeApp_20160304.1 /HOSTS:ABC123,XYZ987.
+        ///   Looks up a localized string similar to /NOCONN.
         /// </summary>
-        public static string MissingAlertArg {
+        public static string GoodNoConnNoLogLevelArgs {
             get {
-                return ResourceManager.GetString("MissingAlertArg", resourceCulture);
+                return ResourceManager.GetString("GoodNoConnNoLogLevelArgs", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /SOURCE:C:\Some Folder /BUILD:App_SomeCo.SomeApp_20160304.1 /HOSTS:ABC123,XYZ987 /ALERT:somedude@someco.com;otherdude@someco.com.
+        ///   Looks up a localized string similar to /NOCONN /LOGLEVEL:WARN.
         /// </summary>
-        public static string MissingAppIdArg {
+        public static string GoodNoConnWithLogLevelArgs {
             get {
-                return ResourceManager.GetString("MissingAppIdArg", resourceCulture);
+                return ResourceManager.GetString("GoodNoConnWithLogLevelArgs", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /SOURCE:C:\Some Folder /APPID:JOBS /HOSTS:ABC123,XYZ987 /ALERT:somedude@someco.com;otherdude@someco.com.
+        ///   Looks up a localized string similar to /PARAMS:ParamsFiles\GoodAllBlobifyParams.txt.
         /// </summary>
-        public static string MissingBuildArg {
+        public static string GoodParamsArgs {
             get {
-                return ResourceManager.GetString("MissingBuildArg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to /SOURCE:C:\Some Folder /APPID:JOBS /BUILD:App_SomeCo.SomeApp_20160304.1  /ALERT:somedude@someco.com;otherdude@someco.com.
-        /// </summary>
-        public static string MissingHostsArgs {
-            get {
-                return ResourceManager.GetString("MissingHostsArgs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to /APPID:JOBS /BUILD:App_SomeCo.SomeApp_20160304.1 /HOSTS:ABC123,XYZ987 /ALERT:somedude@someco.com;otherdude@someco.com.
-        /// </summary>
-        public static string MissingSourceArg {
-            get {
-                return ResourceManager.GetString("MissingSourceArg", resourceCulture);
+                return ResourceManager.GetString("GoodParamsArgs", resourceCulture);
             }
         }
     }

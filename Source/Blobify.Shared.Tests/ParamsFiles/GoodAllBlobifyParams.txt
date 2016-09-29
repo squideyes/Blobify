@@ -1,0 +1,7 @@
+﻿// This comment should be ignored
+/SOURCE:C:\Windows
+/REGEX:.txt$ 
+/RECURSE 
+/CONTAINER:files 
+/PATH:AAA/BBB 
+/LOGLEVEL:WARN

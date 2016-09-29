@@ -1,20 +1,15 @@
-﻿using NLog;
-
-namespace Blobify.Shared.Helpers
+﻿namespace Blobify.Shared.Helpers
 {
     public abstract class OptionsBase
     {
-        public OptionsBase()
-        {
-            LogLevel = LogLevel.Info;
-        }
+        public LogLevel LogLevel { get; set; } = LogLevel.Info;
 
         public string ParamsFile { get; set; }
 
-        public LogLevel LogLevel { get; set; }
+        public abstract void Validate();
 
-        public bool IsValid => GetIsValid();
-
-        protected abstract bool GetIsValid();
+        protected virtual void Normalize()
+        {
+        }
     }
 }

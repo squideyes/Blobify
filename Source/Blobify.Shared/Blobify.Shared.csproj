@@ -74,6 +74,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants\WellKnown.cs" />
+    <Compile Include="Enums\ExitCode.cs" />
+    <Compile Include="Enums\LogLevel.cs" />
     <Compile Include="Enums\Outcome.cs" />
     <Compile Include="Enums\AppId.cs" />
     <Compile Include="Enums\DeployStatus.cs" />

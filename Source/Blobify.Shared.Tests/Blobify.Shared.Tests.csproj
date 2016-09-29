@@ -76,6 +76,11 @@
       <Name>Blobify.Uploader</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="ParamsFiles\GoodAllBlobifyParams.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

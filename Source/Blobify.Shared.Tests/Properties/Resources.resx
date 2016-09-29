@@ -117,31 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="BadAppIdArgs" xml:space="preserve">
-    <value>/SOURCE:C:\Some Folder /APPID:XXX /BUILD:App_SomeCo.SomeApp_20160304.1 /HOSTS:ABC123,XYZ987 /ALERT:somedude@someco.com;otherdude@someco.com</value>
+  <data name="GoodAllBlobifyArgs" xml:space="preserve">
+    <value>/SOURCE:C:\Windows /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN</value>
   </data>
-  <data name="GoodArgsWithSpaces" xml:space="preserve">
-    <value>/SOURCE: C:\Some Folder /APPID: JOBS /BUILD: App_SomeCo.SomeApp_20160304.1 /HOSTS: ABC123 , XYZ987 /ALERT: somedude@someco.com ; otherdude@someco.com</value>
+  <data name="GoodConnNoLogLevelArgs" xml:space="preserve">
+    <value>/CONN:DefaultEndpointsProtocol=https;AccountName=someco;AccountKey=O21totdNsyxIgHMPIq0jVyBhjxkikfeVkOPfCzzdExvc9Yl4VxTXuC0VBfu275etxQnY/tzBqArmTwpoQyPn0w==;</value>
   </data>
-  <data name="GoodConnArgs" xml:space="preserve">
-    <value>/CONN:DefaultEndpointsProtocol=https;AccountName=someco;AccountKey=O21totdNsyxIgHMPIq0jVyBhjxkikfeVkOPfCzzdExvc9Yl4VxTXuC0VBfu275et1QnY/tzBqArmTwpoQyPn0w==;</value>
+  <data name="GoodConnWithLogLevelArgs" xml:space="preserve">
+    <value>/CONN:DefaultEndpointsProtocol=https;AccountName=someco;AccountKey=O21totdNsyxIgHMPIq0jVyBhjxkikfeVkOPfCzzdExvc9Yl4VxTXuC0VBfu275etxQnY/tzBqArmTwpoQyPn0w==; /LOGLEVEL:WARN</value>
   </data>
-  <data name="GoodDeployArgs" xml:space="preserve">
-    <value>/SOURCE:C:\Some Folder /APPID:JOBS /BUILD:App_SomeCo.SomeApp_20160304.1 /HOSTS:ABC123,XYZ987 /ALERT:somedude@someco.com;otherdude@someco.com</value>
+  <data name="GoodMinimalBlobifyArgs" xml:space="preserve">
+    <value>/SOURCE:C:\Windows /CONTAINER:files</value>
   </data>
-  <data name="MissingAlertArg" xml:space="preserve">
-    <value>/SOURCE:C:\Some Folder /APPID:JOBS /BUILD:App_SomeCo.SomeApp_20160304.1 /HOSTS:ABC123,XYZ987</value>
+  <data name="GoodNoConnNoLogLevelArgs" xml:space="preserve">
+    <value>/NOCONN</value>
   </data>
-  <data name="MissingAppIdArg" xml:space="preserve">
-    <value>/SOURCE:C:\Some Folder /BUILD:App_SomeCo.SomeApp_20160304.1 /HOSTS:ABC123,XYZ987 /ALERT:somedude@someco.com;otherdude@someco.com</value>
+  <data name="GoodNoConnWithLogLevelArgs" xml:space="preserve">
+    <value>/NOCONN /LOGLEVEL:WARN</value>
   </data>
-  <data name="MissingBuildArg" xml:space="preserve">
-    <value>/SOURCE:C:\Some Folder /APPID:JOBS /HOSTS:ABC123,XYZ987 /ALERT:somedude@someco.com;otherdude@someco.com</value>
-  </data>
-  <data name="MissingHostsArgs" xml:space="preserve">
-    <value>/SOURCE:C:\Some Folder /APPID:JOBS /BUILD:App_SomeCo.SomeApp_20160304.1  /ALERT:somedude@someco.com;otherdude@someco.com</value>
-  </data>
-  <data name="MissingSourceArg" xml:space="preserve">
-    <value>/APPID:JOBS /BUILD:App_SomeCo.SomeApp_20160304.1 /HOSTS:ABC123,XYZ987 /ALERT:somedude@someco.com;otherdude@someco.com</value>
+  <data name="GoodParamsArgs" xml:space="preserve">
+    <value>/PARAMS:ParamsFiles\GoodAllBlobifyParams.txt</value>
   </data>
 </root>

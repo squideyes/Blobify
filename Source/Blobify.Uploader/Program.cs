@@ -1,4 +1,5 @@
-﻿using Blobify.Shared.Constants;
+﻿using Blobify.Shared;
+using Blobify.Shared.Constants;
 using Blobify.Shared.Helpers;
 using Blobify.Shared.Logging;
 using Blobify.Shared.Models;
@@ -35,23 +36,37 @@ namespace Blobify.Uploader
         {
             try
             {
-                AsyncContext.Run(() => DoWork(args));
+                Console.CancelKeyPress += (s, e) =>
+                    Environment.ExitCode = (int)ExitCode.Cancelled;
 
-                Console.ReadKey(true);
+                var options = ArgsParser<Options>.Parse(args);
 
-                Environment.ExitCode = 1;
+                if (options == null)
+                {
+                    ArgsParser<Options>.ShowHelp();
+
+                    Environment.ExitCode = (int)ExitCode.InitError;
+
+                    return;
+                }
+
+                Environment.ExitCode = 
+                    (int)AsyncContext.Run(() => DoWork(args));
             }
-            catch
+            catch(Exception error)
             {
-                Environment.ExitCode = -1;
+                Environment.ExitCode = (int)ExitCode.ProcessingError;
             }
+
+            Console.WriteLine();
+            Console.Write("Press any key to terminate the program...");
+
+            Console.ReadKey(true);
         }
 
-        private static async Task DoWork(string[] args)
+        private static async Task<ExitCode> DoWork(string[] args)
         {
-            var parser = new ArgsParser<Options>();
-
-            parser.ShowHelp();
+            return ExitCode.Success;
 
             //var options = parser.Parse(args);
 

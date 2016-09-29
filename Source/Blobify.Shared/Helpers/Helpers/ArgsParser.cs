@@ -17,9 +17,15 @@ namespace Blobify.Shared.Helpers
             public OptionKind Kind { get; set; }
         }
 
+        private const string LOGLEVELHELPTEXT =
+            "The minimum logging level (Trace, Debug, Info, Warn, Error or Fatal); by default: Info.";
+
+        private const string PARAMSHELPTEXT =
+            "A file that contains one or more of the above parameters.  Whitespace, such as spaces and newlines, will be ignored, as will per-line comments prefixed by a double-slash.";
+
         private const int WIDTH = 78;
 
-        public void ShowHelp()
+        public static void ShowHelp()
         {
             var options = new List<OptionAttribute>();
 
@@ -57,8 +63,8 @@ namespace Blobify.Shared.Helpers
 
             groups.Add(groups.Keys.Count + 1, new List<OptionAttribute>());
 
-            groups[groups.Keys.Last()].Add(new OptionAttribute("PARAMS", "file", 6, true, false,
-                "A file that contains one or more of the above parameters.  Whitespace, such as spaces and newlines, will be ignored, as will per-line comments prefixed by a double-slash."));
+            groups[groups.Keys.Count + 1].Add(new OptionAttribute(
+                "PARAMS", "file", groups.Keys.Count + 1, true, PARAMSHELPTEXT));
 
             var cmd = new StringBuilder();
 
@@ -125,8 +131,8 @@ namespace Blobify.Shared.Helpers
 
         private static OptionAttribute GetLogLevel(int groupId)
         {
-            return new OptionAttribute("LOGLEVEL", "level", groupId, false, false,
-                "The minimum logging level (Trace, Debug, Info, Warn, Error or Fatal); by default: Info.");
+            return new OptionAttribute(
+                "LOGLEVEL", "level", groupId, false, LOGLEVELHELPTEXT);
         }
 
         private static string GetWrappedToken(OptionAttribute option)
@@ -174,9 +180,9 @@ namespace Blobify.Shared.Helpers
             sb.AppendLine();
         }
 
-        public O Parse(string[] args)
+        public static O Parse(string[] args)
         {
-            var cmd = " " + string.Join(" ", args) + " ";
+            var cmd = string.Join(" ", args) + " /IGNORE";
 
             var specs = new Dictionary<string, Spec>();
 
@@ -188,22 +194,43 @@ namespace Blobify.Shared.Helpers
             foreach (var property in typeof(O).
                 GetProperties(BindingFlags.Instance | BindingFlags.Public))
             {
-                var attrib = property.GetCustomAttribute<OptionAttribute>();
+                string token;
+                OptionKind kind;
+                string helpText;
 
-                if (attrib == null)
-                    continue;
+                if (property.Name == nameof(options.LogLevel))
+                {
+                    token = "LOGLEVEL";
+                    kind = OptionKind.OptionalKeyValue;
+                    helpText = LOGLEVELHELPTEXT;
+                }
+                else if (property.Name == nameof(options.ParamsFile))
+                {
+                    token = "PARAMS";
+                    kind = OptionKind.OptionalKeyValue;
+                    helpText = PARAMSHELPTEXT;
+                }
+                else
+                {
+                    var attrib = property.GetCustomAttribute<OptionAttribute>();
 
-                if (attrib.Token == null)
-                    throw new ArgumentNullException(nameof(attrib.Token));
+                    if (attrib == null)
+                        continue;
 
-                var token = attrib.Token.ToUpper();
+                    if (attrib.Token == null)
+                        throw new ArgumentNullException(nameof(attrib.Token));
+
+                    token = attrib.Token.ToUpper();
+                    kind = attrib.Kind;
+                    helpText = attrib.HelpText;
+                }
 
                 var spec = new Spec()
                 {
                     Property = property,
                     Type = property.PropertyType,
-                    HelpText = attrib.HelpText,
-                    Kind = attrib.Kind
+                    HelpText = helpText,
+                    Kind = kind
                 };
 
                 specs.Add(token, spec);
@@ -233,41 +260,31 @@ namespace Blobify.Shared.Helpers
 
                         SetValue(spec.Property, options, value);
                     }
+                    else
+                    {
+                        throw new ArgumentOutOfRangeException(
+                            $"\"{tv.Value}\" is an invalid {spec.Type} value.");
+                    }
+                }
+                else if (spec.Type.GetInterface(typeof(IConvertible).FullName) != null)
+                {
+                    var value = Convert.ChangeType(tv.Value, spec.Type);
+
+                    SetValue(spec.Property, options, value);
                 }
                 else
                 {
-                    if (spec.Type.GetInterface(typeof(IConvertible).FullName) != null)
-                    {
-                        var value = Convert.ChangeType(tv.Value, spec.Type);
-
-                        SetValue(spec.Property, options, value);
-                    }
-                    else
-                    {
-                        if (spec.Type == typeof(List<string>))
-                        {
-                            var value = (string)Convert.ChangeType(tv.Value, typeof(string));
-
-                            var items = value.Split(new char[] { ',', ';' })
-                                .Select(item => item.Trim()).ToList();
-
-                            SetValue(spec.Property, options, items);
-                        }
-                        else
-                        {
-                            return default(O);
-                        }
-                    }
+                    throw new ArgumentOutOfRangeException(
+                        $"\"{tv.Value}\" could not be assigned to the \"{tv.Token}\" option.");
                 }
             }
 
-            if (!options.IsValid)
-                return default(O);
+            options.Validate();
 
             return options;
         }
 
-        private void SetValue(PropertyInfo info, object instance, object value)
+        private static void SetValue(PropertyInfo info, object instance, object value)
         {
             var targetType = info.PropertyType.IsNullableType()
                  ? Nullable.GetUnderlyingType(info.PropertyType)
@@ -278,32 +295,14 @@ namespace Blobify.Shared.Helpers
             info.SetValue(instance, convertedValue, null);
         }
 
-        private List<string> GetChunks(string cmd)
+        private static List<string> GetChunks(string cmd)
         {
-            var regex = new Regex(
-                @"(?<=\s*?/)[A-Za-z]*?[A-Za-z0-9]\s*?(:|\s)");
+            var regex = new Regex(@"(?<=/).+?:?.*?(?=\s+?/)");
 
-            cmd = " " + cmd + " ";
+            //cmd = " " + cmd + " ";
 
-            var chunks = new List<string>();
-
-            var matches = regex.Matches(cmd).Cast<Match>().ToList();
-
-            for (int i = 0; i < matches.Count - 1; i++)
-            {
-                var chunk = cmd.Substring(matches[i].Index,
-                    matches[i + 1].Index - matches[i].Index - 1).Trim();
-
-                chunks.Add(chunk);
-            }
-
-            if (matches.Count >= 1)
-            {
-                chunks.Add(cmd.Substring(
-                    matches[matches.Count - 1].Index).Trim());
-            }
-
-            return chunks;
+            return regex.Matches(cmd).Cast<Match>()
+                .Select(m => m.Value).ToList();
         }
     }
 }

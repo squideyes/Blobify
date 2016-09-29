@@ -4,7 +4,7 @@ namespace Blobify.Shared.Helpers
 {
     public static class EnumExtenders
     {
-        public static bool IsDefined(this Enum enumeration) =>
+        public static bool IsDefinedEnumValue(this Enum enumeration) =>
             Enum.IsDefined(enumeration.GetType(), enumeration);
 
         public static T ToEnum<T>(this string value) =>

@@ -6,7 +6,7 @@ namespace Blobify.Shared.Helpers
     public class OptionAttribute : Attribute
     {
         public OptionAttribute(string token, string valueName, int groupId,
-            bool valueRequired, bool isGlobal, string helpText)
+            bool valueRequired, string helpText)
         {
             if (string.IsNullOrWhiteSpace(token))
                 throw new ArgumentNullException(nameof(token));
@@ -20,7 +20,6 @@ namespace Blobify.Shared.Helpers
             Token = token.ToUpper();
             ValueName = valueName?.ToLower();
             GroupId = groupId;
-            IsGlobal = isGlobal;
             HelpText = helpText;
 
             if (valueRequired)
@@ -43,7 +42,6 @@ namespace Blobify.Shared.Helpers
         public int GroupId { get; }
         public string ValueName { get; }
         public OptionKind Kind { get; }
-        public bool IsGlobal { get; }
         public string HelpText { get; }
     }
 }

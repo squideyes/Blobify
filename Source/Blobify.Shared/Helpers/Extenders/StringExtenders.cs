@@ -8,7 +8,52 @@ namespace Blobify.Shared.Helpers
 {
     public static class StringExtenders
     {
+        private static Regex containerNameRegex = new Regex(
+            "^[a-z0-9](?:[a-z0-9]|(\\-(?!\\-))){1,61}[a-z0-9]$|^\\$root$",
+                RegexOptions.Compiled);
+
         private static bool isInvalidEmail = false;
+
+        public static bool IsLocalPath(this string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return false;
+
+            if (value.IndexOfAny(Path.GetInvalidPathChars()) != -1)
+                return false;
+
+            try
+            {
+                if (Path.IsPathRooted(value))
+                    return false;
+
+                return true;
+            }
+            catch 
+            {
+                return false;
+            }
+        }
+
+        public static bool IsRegexPattern(this string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return false;
+
+            try
+            {
+                Regex.Match("", value);
+
+                return true;
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
+        }
+
+        public static bool IsContainerName(this string value) =>
+            containerNameRegex.IsMatch(value);
 
         public static bool IsEmail(this string value)
         {
