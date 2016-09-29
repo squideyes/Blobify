@@ -25,7 +25,7 @@ namespace Blobify.Uploader
 
         [Option("PATH", "folders", 1, false,
             "The \"local-path\" within /CONTAINER to upload the blobified files to.  If ommited then the blobified files will be uploaded to the root of /CONTAINER. NOTE: /PATH will be converted to upper-case, by convention, and will be created on the fly if nescessary.")]
-        public string Path { get; set; }
+        public string LocalPath { get; set; }
 
         [Option("CONN", "string", 2, true,
             "The Storage connection-string associated with /CONTAINER. If a /CONN was previously saved to the local machine, it will be overwritten.  In any case, the /CONN will be persisted to the local machine using DPAPI security.")]
@@ -50,13 +50,13 @@ namespace Blobify.Uploader
             AssertOptionNotSet(nameof(Regex), Regex == null);
             AssertOptionNotSet(nameof(Recurse), !Recurse.HasValue);
             AssertOptionNotSet(nameof(Container), Container == null);
-            AssertOptionNotSet(nameof(Path), Path == null);
+            AssertOptionNotSet(nameof(LocalPath), LocalPath == null);
         }
 
         protected override void Normalize()
         {
-            if (Path != null)
-                Path = Path.Replace(@"\", "/");
+            if (LocalPath != null)
+                LocalPath = LocalPath.Replace(@"\", "/");
         }
 
         public override void Validate()
@@ -124,10 +124,10 @@ namespace Blobify.Uploader
                         $"The \"{Container}\" /CONTAINER name is invalid!");
                 }
 
-                if (Path != null && !Path.IsLocalPath())
+                if (LocalPath != null && !LocalPath.IsLocalPath())
                 {
-                    throw new ArgumentNullException(
-                        $"The \"{Path}\" /PATH is invalid!");
+                    throw new ArgumentOutOfRangeException(
+                        $"The \"{LocalPath}\" /PATH is invalid!");
                 }
             }
         }

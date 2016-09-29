@@ -34,27 +34,35 @@ namespace Blobify.Uploader
 
         static void Main(string[] args)
         {
+            Options options;
+
             try
             {
-                Console.CancelKeyPress += (s, e) =>
-                    Environment.ExitCode = (int)ExitCode.Cancelled;
+                options = ArgsParser<Options>.Parse(args);
+            }
+            catch (Exception error)
+            {
+                // log the error here!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-                var options = ArgsParser<Options>.Parse(args);
+                ArgsParser<Options>.ShowHelp(error);
 
-                if (options == null)
-                {
-                    ArgsParser<Options>.ShowHelp();
+                Environment.ExitCode = (int)ExitCode.InitError;
 
-                    Environment.ExitCode = (int)ExitCode.InitError;
+                return;
+            }
 
-                    return;
-                }
+            Console.CancelKeyPress += (s, e) =>
+                Environment.ExitCode = (int)ExitCode.Cancelled;
 
-                Environment.ExitCode = 
+            try
+            {
+                Environment.ExitCode =
                     (int)AsyncContext.Run(() => DoWork(args));
             }
-            catch(Exception error)
+            catch (Exception error)
             {
+                Console.WriteLine(error.Message);
+
                 Environment.ExitCode = (int)ExitCode.ProcessingError;
             }
 

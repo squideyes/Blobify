@@ -23,9 +23,12 @@ namespace Blobify.Shared.Helpers
         private const string PARAMSHELPTEXT =
             "A file that contains one or more of the above parameters.  Whitespace, such as spaces and newlines, will be ignored, as will per-line comments prefixed by a double-slash.";
 
+        private static Regex chunksRegex =
+            new Regex(@"(?<=/).+?:?.*?(?=\s+?/)", RegexOptions.Compiled);
+
         private const int WIDTH = 78;
 
-        public static void ShowHelp()
+        public static void ShowHelp(Exception error = null)
         {
             var options = new List<OptionAttribute>();
 
@@ -295,14 +298,7 @@ namespace Blobify.Shared.Helpers
             info.SetValue(instance, convertedValue, null);
         }
 
-        private static List<string> GetChunks(string cmd)
-        {
-            var regex = new Regex(@"(?<=/).+?:?.*?(?=\s+?/)");
-
-            //cmd = " " + cmd + " ";
-
-            return regex.Matches(cmd).Cast<Match>()
-                .Select(m => m.Value).ToList();
-        }
+        private static List<string> GetChunks(string cmd) =>
+            chunksRegex.Matches(cmd).Cast<Match>().Select(m => m.Value).ToList();
     }
 }

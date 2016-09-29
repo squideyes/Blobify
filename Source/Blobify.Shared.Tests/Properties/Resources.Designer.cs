@@ -61,65 +61,137 @@ namespace Blobify.Shared.Tests.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /SOURCE:C:\Windows /REGEX:.txt$ /RECURSE /CONTAINER:BADCONTAINERNAME /PATH:AAA/BBB /LOGLEVEL:WARN.
+        /// </summary>
+        public static string BadContainerName {
+            get {
+                return ResourceManager.GetString("BadContainerName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /SOURCE:C:\Windows /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:XXX.
+        /// </summary>
+        public static string BadLogLevel {
+            get {
+                return ResourceManager.GetString("BadLogLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /PARAMS:InvalidPath\GoodAllBlobifyParams.txt.
+        /// </summary>
+        public static string BadParams {
+            get {
+                return ResourceManager.GetString("BadParams", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /SOURCE:C:\Windows /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:C:\AAA\BBB /LOGLEVEL:WARN.
+        /// </summary>
+        public static string BadPath {
+            get {
+                return ResourceManager.GetString("BadPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /SOURCE:C:\Windows /REGEX:[a- /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN.
+        /// </summary>
+        public static string BadRegex {
+            get {
+                return ResourceManager.GetString("BadRegex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /SOURCE:PathDoesn&apos;tExist /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN.
+        /// </summary>
+        public static string BadSource {
+            get {
+                return ResourceManager.GetString("BadSource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /SOURCE:C:\Windows /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN.
         /// </summary>
-        public static string GoodAllBlobifyArgs {
+        public static string GoodBlobifyWithAllOptions {
             get {
-                return ResourceManager.GetString("GoodAllBlobifyArgs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to /CONN:DefaultEndpointsProtocol=https;AccountName=someco;AccountKey=O21totdNsyxIgHMPIq0jVyBhjxkikfeVkOPfCzzdExvc9Yl4VxTXuC0VBfu275etxQnY/tzBqArmTwpoQyPn0w==;.
-        /// </summary>
-        public static string GoodConnNoLogLevelArgs {
-            get {
-                return ResourceManager.GetString("GoodConnNoLogLevelArgs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to /CONN:DefaultEndpointsProtocol=https;AccountName=someco;AccountKey=O21totdNsyxIgHMPIq0jVyBhjxkikfeVkOPfCzzdExvc9Yl4VxTXuC0VBfu275etxQnY/tzBqArmTwpoQyPn0w==; /LOGLEVEL:WARN.
-        /// </summary>
-        public static string GoodConnWithLogLevelArgs {
-            get {
-                return ResourceManager.GetString("GoodConnWithLogLevelArgs", resourceCulture);
+                return ResourceManager.GetString("GoodBlobifyWithAllOptions", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to /SOURCE:C:\Windows /CONTAINER:files.
         /// </summary>
-        public static string GoodMinimalBlobifyArgs {
+        public static string GoodBlobifyWithMinOptions {
             get {
-                return ResourceManager.GetString("GoodMinimalBlobifyArgs", resourceCulture);
+                return ResourceManager.GetString("GoodBlobifyWithMinOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /CONN:DefaultEndpointsProtocol=https;AccountName=someco;AccountKey=O21totdNsyxIgHMPIq0jVyBhjxkikfeVkOPfCzzdExvc9Yl4VxTXuC0VBfu275etxQnY/tzBqArmTwpoQyPn0w==;.
+        /// </summary>
+        public static string GoodConnNoLogLevel {
+            get {
+                return ResourceManager.GetString("GoodConnNoLogLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /CONN:DefaultEndpointsProtocol=https;AccountName=someco;AccountKey=O21totdNsyxIgHMPIq0jVyBhjxkikfeVkOPfCzzdExvc9Yl4VxTXuC0VBfu275etxQnY/tzBqArmTwpoQyPn0w==; /LOGLEVEL:WARN.
+        /// </summary>
+        public static string GoodConnWithLogLevel {
+            get {
+                return ResourceManager.GetString("GoodConnWithLogLevel", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to /NOCONN.
         /// </summary>
-        public static string GoodNoConnNoLogLevelArgs {
+        public static string GoodNoConnNoLogLevel {
             get {
-                return ResourceManager.GetString("GoodNoConnNoLogLevelArgs", resourceCulture);
+                return ResourceManager.GetString("GoodNoConnNoLogLevel", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to /NOCONN /LOGLEVEL:WARN.
         /// </summary>
-        public static string GoodNoConnWithLogLevelArgs {
+        public static string GoodNoConnWithLogLevel {
             get {
-                return ResourceManager.GetString("GoodNoConnWithLogLevelArgs", resourceCulture);
+                return ResourceManager.GetString("GoodNoConnWithLogLevel", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to /PARAMS:ParamsFiles\GoodAllBlobifyParams.txt.
         /// </summary>
-        public static string GoodParamsArgs {
+        public static string GoodParams {
             get {
-                return ResourceManager.GetString("GoodParamsArgs", resourceCulture);
+                return ResourceManager.GetString("GoodParams", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /PARAMS:ParamsFiles\GoodAllBlobifyParams.txt /LOGLEVEL:WARN.
+        /// </summary>
+        public static string GoodParamsWithLogLevel {
+            get {
+                return ResourceManager.GetString("GoodParamsWithLogLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /SOURCE:C:\Windows /REGEX:.txt$ /XXX /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN.
+        /// </summary>
+        public static string UnregognizedOptionIgnored {
+            get {
+                return ResourceManager.GetString("UnregognizedOptionIgnored", resourceCulture);
             }
         }
     }

@@ -117,25 +117,49 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="GoodAllBlobifyArgs" xml:space="preserve">
+  <data name="BadContainerName" xml:space="preserve">
+    <value>/SOURCE:C:\Windows /REGEX:.txt$ /RECURSE /CONTAINER:BADCONTAINERNAME /PATH:AAA/BBB /LOGLEVEL:WARN</value>
+  </data>
+  <data name="BadLogLevel" xml:space="preserve">
+    <value>/SOURCE:C:\Windows /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:XXX</value>
+  </data>
+  <data name="BadParams" xml:space="preserve">
+    <value>/PARAMS:InvalidPath\GoodAllBlobifyParams.txt</value>
+  </data>
+  <data name="BadPath" xml:space="preserve">
+    <value>/SOURCE:C:\Windows /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:C:\AAA\BBB /LOGLEVEL:WARN</value>
+  </data>
+  <data name="BadRegex" xml:space="preserve">
+    <value>/SOURCE:C:\Windows /REGEX:[a- /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN</value>
+  </data>
+  <data name="BadSource" xml:space="preserve">
+    <value>/SOURCE:PathDoesn'tExist /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN</value>
+  </data>
+  <data name="GoodBlobifyWithAllOptions" xml:space="preserve">
     <value>/SOURCE:C:\Windows /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN</value>
   </data>
-  <data name="GoodConnNoLogLevelArgs" xml:space="preserve">
-    <value>/CONN:DefaultEndpointsProtocol=https;AccountName=someco;AccountKey=O21totdNsyxIgHMPIq0jVyBhjxkikfeVkOPfCzzdExvc9Yl4VxTXuC0VBfu275etxQnY/tzBqArmTwpoQyPn0w==;</value>
-  </data>
-  <data name="GoodConnWithLogLevelArgs" xml:space="preserve">
-    <value>/CONN:DefaultEndpointsProtocol=https;AccountName=someco;AccountKey=O21totdNsyxIgHMPIq0jVyBhjxkikfeVkOPfCzzdExvc9Yl4VxTXuC0VBfu275etxQnY/tzBqArmTwpoQyPn0w==; /LOGLEVEL:WARN</value>
-  </data>
-  <data name="GoodMinimalBlobifyArgs" xml:space="preserve">
+  <data name="GoodBlobifyWithMinOptions" xml:space="preserve">
     <value>/SOURCE:C:\Windows /CONTAINER:files</value>
   </data>
-  <data name="GoodNoConnNoLogLevelArgs" xml:space="preserve">
+  <data name="GoodConnNoLogLevel" xml:space="preserve">
+    <value>/CONN:DefaultEndpointsProtocol=https;AccountName=someco;AccountKey=O21totdNsyxIgHMPIq0jVyBhjxkikfeVkOPfCzzdExvc9Yl4VxTXuC0VBfu275etxQnY/tzBqArmTwpoQyPn0w==;</value>
+  </data>
+  <data name="GoodConnWithLogLevel" xml:space="preserve">
+    <value>/CONN:DefaultEndpointsProtocol=https;AccountName=someco;AccountKey=O21totdNsyxIgHMPIq0jVyBhjxkikfeVkOPfCzzdExvc9Yl4VxTXuC0VBfu275etxQnY/tzBqArmTwpoQyPn0w==; /LOGLEVEL:WARN</value>
+  </data>
+  <data name="GoodNoConnNoLogLevel" xml:space="preserve">
     <value>/NOCONN</value>
   </data>
-  <data name="GoodNoConnWithLogLevelArgs" xml:space="preserve">
+  <data name="GoodNoConnWithLogLevel" xml:space="preserve">
     <value>/NOCONN /LOGLEVEL:WARN</value>
   </data>
-  <data name="GoodParamsArgs" xml:space="preserve">
+  <data name="GoodParams" xml:space="preserve">
     <value>/PARAMS:ParamsFiles\GoodAllBlobifyParams.txt</value>
+  </data>
+  <data name="GoodParamsWithLogLevel" xml:space="preserve">
+    <value>/PARAMS:ParamsFiles\GoodAllBlobifyParams.txt /LOGLEVEL:WARN</value>
+  </data>
+  <data name="UnregognizedOptionIgnored" xml:space="preserve">
+    <value>/SOURCE:C:\Windows /REGEX:.txt$ /XXX /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN</value>
   </data>
 </root>
