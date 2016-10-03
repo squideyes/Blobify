@@ -29,7 +29,7 @@ namespace Blobify.Shared.Helpers
 
                 return true;
             }
-            catch 
+            catch
             {
                 return false;
             }
@@ -164,6 +164,70 @@ namespace Blobify.Shared.Helpers
                 lines.Add(text.Substring(start));
 
             return lines;
+        }
+        public static bool IsTrimmed(this string value) =>
+            value == null || value == value.Trim();
+
+        public static bool IsFileName(this string value, bool mustBeRooted = true)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return false;
+
+            if (value.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
+                return false;
+
+            try
+            {
+                new FileInfo(value);
+
+                if (!mustBeRooted)
+                    return true;
+                else
+                    return Path.IsPathRooted(value);
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
+            catch (PathTooLongException)
+            {
+                return false;
+            }
+            catch (NotSupportedException)
+            {
+                return false;
+            }
+        }
+
+        public static bool IsFolderName(this string value, bool mustBeRooted = true)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return false;
+
+            if (value.IndexOfAny(Path.GetInvalidPathChars()) != -1)
+                return false;
+
+            try
+            {
+                new DirectoryInfo(value);
+
+                if (!mustBeRooted)
+                    return true;
+                else
+                    return Path.IsPathRooted(value);
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
+            catch (PathTooLongException)
+            {
+                return false;
+            }
+            catch (NotSupportedException)
+            {
+                return false;
+            }
         }
     }
 }

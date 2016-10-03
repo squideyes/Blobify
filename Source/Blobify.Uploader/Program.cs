@@ -10,6 +10,7 @@ using Nito.AsyncEx;
 using NLog;
 using SafeConfig;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.IO.Compression;
@@ -30,8 +31,6 @@ namespace Blobify.Uploader
         private const string CREATING =
             "Creating the \"{0}\" {1}, if it doesn't already exist.";
 
-        private const string CONNSTRING = "ConnString";
-
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         static void Main(string[] args)
@@ -40,15 +39,31 @@ namespace Blobify.Uploader
 
             try
             {
-                options = ArgsParser<Options>.Parse(args);
+                if (args.Length == 0)
+                {
+                    logger.Warn("The program was invoked without command-line arguments.");
+
+                    Console.WriteLine();
+
+                    ShowHelpAndSetExitCode(null, ExitCode.NoArgs);
+
+                    return;
+                }
+
+                options = ArgsParser<Options>.Parse(string.Join(" ", args));
+
+                if (options.ParamsFile != null)
+                {
+                    options = LoadParamsFile(options.ParamsFile);
+                }
+
+                logger.Info($"Parsed {nameof(Options)}: {options}");
             }
             catch (Exception error)
             {
-                // log the error here!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                logger.Error("InitError: " + error);
 
-                ArgsParser<Options>.ShowHelp(error);
-
-                Environment.ExitCode = (int)ExitCode.InitError;
+                ShowHelpAndSetExitCode(error, ExitCode.InitError);
 
                 return;
             }
@@ -58,12 +73,14 @@ namespace Blobify.Uploader
 
             try
             {
+                logger.Debug("Kicking off the Blobify process");
+
                 Environment.ExitCode =
                     (int)AsyncContext.Run(() => DoWork(args));
             }
             catch (Exception error)
             {
-                Console.WriteLine(error.Message);
+                logger.Error("ProcessingError: " + error);
 
                 Environment.ExitCode = (int)ExitCode.ProcessingError;
             }
@@ -72,6 +89,35 @@ namespace Blobify.Uploader
             Console.Write("Press any key to terminate the program...");
 
             Console.ReadKey(true);
+        }
+
+        private static void ShowHelpAndSetExitCode(Exception error, ExitCode exitCode)
+        {
+            ArgsParser<Options>.ShowHelp(error);
+
+            Environment.ExitCode = (int)exitCode;
+        }
+
+        private static Options LoadParamsFile(string paramsFile)
+        {
+            var lines = new List<string>();
+
+            using (var reader = new StreamReader(paramsFile))
+            {
+                string line;
+
+                while ((line = reader.ReadLine()) != null)
+                {
+                    line = line.Trim();
+
+                    if (line.StartsWith("//"))
+                        continue;
+
+                    lines.Add(line);
+                }
+            }
+
+            return ArgsParser<Options>.Parse(string.Join(" ", lines));
         }
 
         private static async Task<ExitCode> DoWork(string[] args)

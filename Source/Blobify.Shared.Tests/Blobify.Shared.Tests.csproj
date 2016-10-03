@@ -57,7 +57,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Tests\ArgsParserTests.cs" />
-    <Compile Include="Helpers\MiscExtenders.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

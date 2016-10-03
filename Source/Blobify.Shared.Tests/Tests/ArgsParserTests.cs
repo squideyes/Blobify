@@ -11,66 +11,68 @@ namespace Blobify.Shared.Tests
     {
         [TestMethod]
         public void ArgsParserTests_GoodBlobifyWithAllOptions() =>
-            ParseArgs(PR.GoodBlobifyWithAllOptions);
+            ArgsParser<Options>.Parse(PR.GoodBlobifyWithAllOptions);
 
         [TestMethod]
         public void ArgsParserTests_GoodConnNoLogLevel() =>
-            ParseArgs(PR.GoodConnNoLogLevel);
+            ArgsParser<Options>.Parse(PR.GoodConnNoLogLevel);
 
         [TestMethod]
         public void ArgsParserTests_GoodConnWithLogLevel() =>
-            ParseArgs(PR.GoodConnWithLogLevel);
+            ArgsParser<Options>.Parse(PR.GoodConnWithLogLevel);
 
         [TestMethod]
         public void ArgsParserTests_GoodBlobifyWithMinOptions() =>
-            ParseArgs(PR.GoodBlobifyWithMinOptions);
+            ArgsParser<Options>.Parse(PR.GoodBlobifyWithMinOptions);
 
         [TestMethod]
         public void ArgsParserTests_GoodNoConnNoLogLevel() =>
-            ParseArgs(PR.GoodNoConnNoLogLevel);
+            ArgsParser<Options>.Parse(PR.GoodNoConnNoLogLevel);
 
         [TestMethod]
         public void ArgsParserTests_GoodNoConnWithLogLevel() =>
-            ParseArgs(PR.GoodNoConnWithLogLevel);
+            ArgsParser<Options>.Parse(PR.GoodNoConnWithLogLevel);
 
         [TestMethod]
         public void ArgsParserTests_GoodParams() =>
-            ParseArgs(PR.GoodParams);
+            ArgsParser<Options>.Parse(PR.GoodParams);
 
         [TestMethod]
         public void ArgsParserTests_GoodParamsWithLogLevel() =>
-            ParseArgs(PR.GoodParamsWithLogLevel);
+            ArgsParser<Options>.Parse(PR.GoodParamsWithLogLevel);
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void ArgsParserTests_BadSource() => ParseArgs(PR.BadSource);
+        public void ArgsParserTests_BadSource() => 
+            ArgsParser<Options>.Parse(PR.BadSource);
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void ArgsParserTests_BadRegex() => ParseArgs(PR.BadRegex);
+        public void ArgsParserTests_BadRegex() => 
+            ArgsParser<Options>.Parse(PR.BadRegex);
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void ArgsParserTests_BadContainerName() =>
-            ParseArgs(PR.BadContainerName);
+            ArgsParser<Options>.Parse(PR.BadContainerName);
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void ArgsParserTests_BadPath() => ParseArgs(PR.BadPath);
+        public void ArgsParserTests_BadPath() => 
+            ArgsParser<Options>.Parse(PR.BadPath);
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void ArgsParserTests_BadLogLevel() => ParseArgs(PR.BadLogLevel);
+        public void ArgsParserTests_BadLogLevel() => 
+            ArgsParser<Options>.Parse(PR.BadLogLevel);
 
         [TestMethod]
         public void ArgsParserTests_UnregognizedOptionIgnored() =>
-            ParseArgs(PR.UnregognizedOptionIgnored);
+            ArgsParser<Options>.Parse(PR.UnregognizedOptionIgnored);
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void ArgsParserTests_BadParams() => ParseArgs(PR.BadParams);
-
-        private Options ParseArgs(string cmd) =>
-            ArgsParser<Options>.Parse(cmd.Split(' '));
+        public void ArgsParserTests_BadParams() =>
+            ArgsParser<Options>.Parse(PR.BadParams);
     }
 }

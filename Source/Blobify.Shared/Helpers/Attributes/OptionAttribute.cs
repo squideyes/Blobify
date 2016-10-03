@@ -11,7 +11,7 @@ namespace Blobify.Shared.Helpers
             if (string.IsNullOrWhiteSpace(token))
                 throw new ArgumentNullException(nameof(token));
 
-            if (groupId <= 0)
+            if (groupId < 0)
                 throw new ArgumentNullException(nameof(groupId));
 
             if (string.IsNullOrWhiteSpace(helpText))

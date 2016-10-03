@@ -46,6 +46,17 @@ namespace Blobify.Shared.Helpers
 
             var sb = new StringBuilder();
 
+            if (error != null)
+            {
+                sb.AppendLine(new string('=', WIDTH));
+                sb.AppendLine("ERROR:");
+
+                foreach (var line in error.Message.ToSingleLine().Wrap(WIDTH))
+                    sb.AppendLine(line);
+
+                sb.AppendLine(new string('=', WIDTH));
+            }
+
             sb.AppendLine(new string('=', WIDTH));
             sb.AppendLine($"{appInfo.Title}. {appInfo.Copyright}");
             sb.AppendLine(new string('=', WIDTH));
@@ -58,15 +69,15 @@ namespace Blobify.Shared.Helpers
                 if (!groups.ContainsKey(option.GroupId))
                     groups.Add(option.GroupId, new List<OptionAttribute>());
 
-                groups[option.GroupId].Add(option);
+                groups.First(g => g.Key == option.GroupId).Value.Add(option);
             }
 
             foreach (var groupId in groups.Keys)
-                groups[groupId].Add(GetLogLevel(groupId));
+                groups.First(g => g.Key == groupId).Value.Add(GetLogLevel(groupId));
 
-            groups.Add(groups.Keys.Count + 1, new List<OptionAttribute>());
+            groups.Add(groups.Count + 1, new List<OptionAttribute>());
 
-            groups[groups.Keys.Count + 1].Add(new OptionAttribute(
+            groups.Last().Value.Add(new OptionAttribute(
                 "PARAMS", "file", groups.Keys.Count + 1, true, PARAMSHELPTEXT));
 
             var cmd = new StringBuilder();
@@ -82,12 +93,12 @@ namespace Blobify.Shared.Helpers
 
                 firstGroup = false;
 
-                if (groups[groupId].Count > 1)
+                if (groups.First(g => g.Key == groupId).Value.Count > 1)
                     cmd.Append("[");
 
                 var firstOption = true;
 
-                foreach (var option in groups[groupId])
+                foreach (var option in groups.First(g => g.Key == groupId).Value)
                 {
                     if (!firstOption)
                         cmd.Append(' ');
@@ -97,7 +108,7 @@ namespace Blobify.Shared.Helpers
                     cmd.Append(GetWrappedToken(option));
                 }
 
-                if (groups[groupId].Count > 1)
+                if (groups.First(g => g.Key == groupId).Value.Count > 1)
                     cmd.Append("]");
             }
 
@@ -122,7 +133,7 @@ namespace Blobify.Shared.Helpers
 
                 firstGroup = false;
 
-                foreach (var option in groups[groupId])
+                foreach (var option in groups.First(g => g.Key == groupId).Value)
                     ShowOptionHelp(sb, option);
             }
 
@@ -183,9 +194,12 @@ namespace Blobify.Shared.Helpers
             sb.AppendLine();
         }
 
-        public static O Parse(string[] args)
+        public static O Parse(string commands)
         {
-            var cmd = string.Join(" ", args) + " /IGNORE";
+            if (string.IsNullOrWhiteSpace(commands))
+                throw new ArgumentNullException(nameof(commands));
+
+            commands = commands.Trim() + " /IGNORE";
 
             var specs = new Dictionary<string, Spec>();
 
@@ -239,7 +253,7 @@ namespace Blobify.Shared.Helpers
                 specs.Add(token, spec);
             }
 
-            var chunks = GetChunks(cmd);
+            var chunks = GetChunks(commands);
 
             foreach (var chunk in chunks)
             {

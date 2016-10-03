@@ -90,7 +90,6 @@
     <Compile Include="Helpers\Extenders\TypeExtenders.cs" />
     <Compile Include="Helpers\Helpers\AppInfo.cs" />
     <Compile Include="Helpers\Helpers\ArgsParser.cs" />
-    <Compile Include="Helpers\Helpers\Contract.cs" />
     <Compile Include="Helpers\Primatives\TokenValue.cs" />
     <Compile Include="Models\AlertInfo.cs" />
     <Compile Include="Models\ControlEntity.cs" />

@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Reflection;
 using System.Text;
 
 namespace Blobify.Shared.Helpers
 {
     public class AppInfo
-    { 
+    {
         public AppInfo(Assembly assembly)
         {
-            Contract.Requires(assembly != null, nameof(assembly));
+            if (assembly == null)
+                throw new ArgumentNullException(nameof(assembly));
 
             Product = GetProduct(assembly);
             Version = assembly.GetName().Version;
@@ -49,14 +49,10 @@ namespace Blobify.Shared.Helpers
             }
         }
 
-        private static string GetCopyright(Assembly assembly)
-        {
-            return assembly.GetAttribute<AssemblyCopyrightAttribute>().Copyright;
-        }
+        private static string GetCopyright(Assembly assembly) =>
+            assembly.GetAttribute<AssemblyCopyrightAttribute>().Copyright;
 
-        private static string GetProduct(Assembly assembly)
-        {
-            return assembly.GetAttribute<AssemblyProductAttribute>().Product;
-        }
+        private static string GetProduct(Assembly assembly) =>
+            assembly.GetAttribute<AssemblyProductAttribute>().Product;
     }
 }
