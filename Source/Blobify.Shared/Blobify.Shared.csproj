@@ -83,6 +83,7 @@
     <Compile Include="Enums\MiscExtenders.cs" />
     <Compile Include="Helpers\Attributes\ContainerNameAttribute.cs" />
     <Compile Include="Helpers\Attributes\ConnStringAttribute.cs" />
+    <Compile Include="Helpers\Attributes\DefinedEnumAttribute.cs" />
     <Compile Include="Helpers\Attributes\FileNameAttribute.cs" />
     <Compile Include="Helpers\Attributes\LocalPathAttribute.cs" />
     <Compile Include="Helpers\Attributes\RegexPatternNameAttribute.cs" />

@@ -3,7 +3,6 @@ using Blobify.Uploader;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using PR = Blobify.Shared.Tests.Properties.Resources;
 
 namespace Blobify.Shared.Tests
@@ -40,7 +39,7 @@ namespace Blobify.Shared.Tests
             ArgsParser<Options>.Parse(PR.GoodParams);
 
         [TestMethod]
-        [ExpectedException(typeof(ValidationResult))]
+        [ExpectedException(typeof(ValidationException))]
         public void ArgsParserTests_BadSource() =>
             ArgsParser<Options>.Parse(PR.BadSource);
 
@@ -50,7 +49,7 @@ namespace Blobify.Shared.Tests
 
         [TestMethod]
         [ExpectedException(typeof(ValidationException))]
-        public void ArgsParserTests_BadRegex() => 
+        public void ArgsParserTests_BadRegex() =>
             ArgsParser<Options>.Parse(PR.BadRegex);
 
         [TestMethod]
@@ -60,12 +59,12 @@ namespace Blobify.Shared.Tests
 
         [TestMethod]
         [ExpectedException(typeof(ValidationException))]
-        public void ArgsParserTests_BadPath() => 
+        public void ArgsParserTests_BadPath() =>
             ArgsParser<Options>.Parse(PR.BadPath);
 
         [TestMethod]
-        [ExpectedException(typeof(ValidationException))]
-        public void ArgsParserTests_BadLogLevel() => 
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void ArgsParserTests_BadLogLevel() =>
             ArgsParser<Options>.Parse(PR.BadLogLevel);
 
         [TestMethod]

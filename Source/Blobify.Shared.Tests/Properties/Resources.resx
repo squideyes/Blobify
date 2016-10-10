@@ -124,7 +124,7 @@
     <value>/SOURCE:C:\Windows /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:XXX</value>
   </data>
   <data name="BadParams" xml:space="preserve">
-    <value>/PARAMS:InvalidPath\GoodAllBlobifyParams.txt</value>
+    <value>/PARAMS:SomePath\GoodAllBlobifyParams.txt&gt;</value>
   </data>
   <data name="BadPath" xml:space="preserve">
     <value>/SOURCE:C:\Windows /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:C:\AAA\BBB /LOGLEVEL:WARN</value>
@@ -133,7 +133,7 @@
     <value>/SOURCE:C:\Windows /REGEX:[a- /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN</value>
   </data>
   <data name="BadSource" xml:space="preserve">
-    <value>/SOURCE:BadPath&lt; /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN</value>
+    <value>/SOURCE:SomePath&gt; /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN</value>
   </data>
   <data name="GoodBlobifyWithAllOptions" xml:space="preserve">
     <value>/SOURCE:C:\Windows /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN</value>

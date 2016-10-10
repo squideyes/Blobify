@@ -198,7 +198,7 @@ namespace Blobify.Shared.Helpers
         public static O Parse(string commands)
         {
             if (string.IsNullOrWhiteSpace(commands))
-                throw new ArgumentNullException(nameof(commands));
+                return new O();
 
             commands = commands.Trim() + " /IGNORE";
 
@@ -274,38 +274,23 @@ namespace Blobify.Shared.Helpers
                     if (Enum.GetNames(spec.Type).Any(
                         e => e.ToUpper() == tv.Value.ToUpper()))
                     {
-                        var value = Enum.Parse(spec.Type, tv.Value, true);
-
-                        SetValue(spec.Property, options, value);
+                        SetValue(spec.Property, options,
+                            Enum.Parse(spec.Type, tv.Value, true));
                     }
                     else
                     {
                         throw new ArgumentOutOfRangeException(
-                            $"\"{tv.Value}\" is an invalid {spec.Type} value.");
+                            $"\"{tv.Value}\" is an invlaid {spec.Type}!");
                     }
                 }
                 else if (spec.Type.GetInterface(typeof(IConvertible).FullName) != null)
                 {
-                    var value = Convert.ChangeType(tv.Value, spec.Type);
-
-                    SetValue(spec.Property, options, value);
-                }
-                else
-                {
-                    throw new ArgumentOutOfRangeException(
-                        $"\"{tv.Value}\" could not be assigned to the \"{tv.Token}\" option.");
+                    SetValue(spec.Property, options, 
+                        Convert.ChangeType(tv.Value, spec.Type));
                 }
             }
 
-            try
-            {
-
-                Validator.ValidateObject(options, new ValidationContext(options), true);
-            }
-            catch (Exception error)
-            {
-                throw;
-            }
+            Validator.ValidateObject(options, new ValidationContext(options), true);
 
             return options;
         }

@@ -79,7 +79,7 @@ namespace Blobify.Shared.Tests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /PARAMS:InvalidPath\GoodAllBlobifyParams.txt.
+        ///   Looks up a localized string similar to /PARAMS:SomePath\GoodAllBlobifyParams.txt&gt;.
         /// </summary>
         public static string BadParams {
             get {
@@ -106,7 +106,7 @@ namespace Blobify.Shared.Tests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /SOURCE:BadPath&lt; /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN.
+        ///   Looks up a localized string similar to /SOURCE:SomePath&gt; /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN.
         /// </summary>
         public static string BadSource {
             get {
