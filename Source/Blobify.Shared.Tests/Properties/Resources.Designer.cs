@@ -106,7 +106,7 @@ namespace Blobify.Shared.Tests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /SOURCE:PathDoesn&apos;tExist /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN.
+        ///   Looks up a localized string similar to /SOURCE:BadPath&lt; /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN.
         /// </summary>
         public static string BadSource {
             get {

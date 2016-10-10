@@ -53,9 +53,9 @@ namespace Blobify.Uploader
                 options = ArgsParser<Options>.Parse(string.Join(" ", args));
 
                 if (options.ParamsFile != null)
-                {
                     options = LoadParamsFile(options.ParamsFile);
-                }
+
+                options.ValidateDependencies();
 
                 logger.Info($"Parsed {nameof(Options)}: {options}");
             }

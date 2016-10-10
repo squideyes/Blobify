@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -296,7 +297,15 @@ namespace Blobify.Shared.Helpers
                 }
             }
 
-            options.Validate();
+            try
+            {
+
+                Validator.ValidateObject(options, new ValidationContext(options), true);
+            }
+            catch (Exception error)
+            {
+                throw;
+            }
 
             return options;
         }

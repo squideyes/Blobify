@@ -2,6 +2,8 @@
 using Blobify.Uploader;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.ComponentModel.DataAnnotations;
+using System.IO;
 using PR = Blobify.Shared.Tests.Properties.Resources;
 
 namespace Blobify.Shared.Tests
@@ -38,31 +40,31 @@ namespace Blobify.Shared.Tests
             ArgsParser<Options>.Parse(PR.GoodParams);
 
         [TestMethod]
+        [ExpectedException(typeof(ValidationResult))]
+        public void ArgsParserTests_BadSource() =>
+            ArgsParser<Options>.Parse(PR.BadSource);
+
+        [TestMethod]
         public void ArgsParserTests_GoodParamsWithLogLevel() =>
             ArgsParser<Options>.Parse(PR.GoodParamsWithLogLevel);
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void ArgsParserTests_BadSource() => 
-            ArgsParser<Options>.Parse(PR.BadSource);
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        [ExpectedException(typeof(ValidationException))]
         public void ArgsParserTests_BadRegex() => 
             ArgsParser<Options>.Parse(PR.BadRegex);
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        [ExpectedException(typeof(ValidationException))]
         public void ArgsParserTests_BadContainerName() =>
             ArgsParser<Options>.Parse(PR.BadContainerName);
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        [ExpectedException(typeof(ValidationException))]
         public void ArgsParserTests_BadPath() => 
             ArgsParser<Options>.Parse(PR.BadPath);
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        [ExpectedException(typeof(ValidationException))]
         public void ArgsParserTests_BadLogLevel() => 
             ArgsParser<Options>.Parse(PR.BadLogLevel);
 
@@ -71,7 +73,7 @@ namespace Blobify.Shared.Tests
             ArgsParser<Options>.Parse(PR.UnregognizedOptionIgnored);
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof(ValidationException))]
         public void ArgsParserTests_BadParams() =>
             ArgsParser<Options>.Parse(PR.BadParams);
     }

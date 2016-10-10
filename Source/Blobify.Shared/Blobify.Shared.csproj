@@ -60,6 +60,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Spatial, Version=5.6.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Spatial.5.6.4\lib\net40\System.Spatial.dll</HintPath>
@@ -80,6 +81,13 @@
     <Compile Include="Enums\AppId.cs" />
     <Compile Include="Enums\DeployStatus.cs" />
     <Compile Include="Enums\MiscExtenders.cs" />
+    <Compile Include="Helpers\Attributes\ContainerNameAttribute.cs" />
+    <Compile Include="Helpers\Attributes\ConnStringAttribute.cs" />
+    <Compile Include="Helpers\Attributes\FileNameAttribute.cs" />
+    <Compile Include="Helpers\Attributes\LocalPathAttribute.cs" />
+    <Compile Include="Helpers\Attributes\RegexPatternNameAttribute.cs" />
+    <Compile Include="Helpers\Attributes\StringValidationAttribute.cs" />
+    <Compile Include="Helpers\Attributes\FolderNameAttribute.cs" />
     <Compile Include="Helpers\Attributes\OptionAttribute.cs" />
     <Compile Include="Helpers\Enums\OptionKind.cs" />
     <Compile Include="Helpers\Primatives\OptionsBase.cs" />

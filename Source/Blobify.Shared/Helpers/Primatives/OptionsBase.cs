@@ -4,12 +4,13 @@
     {
         public LogLevel LogLevel { get; set; } = LogLevel.Info;
 
+        [FileName("PARAMS", false)]
         public string ParamsFile { get; set; }
-
-        public abstract void Validate();
 
         protected virtual void Normalize()
         {
         }
+
+        public abstract void ValidateDependencies();
     }
 }

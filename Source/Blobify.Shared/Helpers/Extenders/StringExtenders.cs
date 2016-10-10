@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.WindowsAzure.Storage;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -13,6 +14,13 @@ namespace Blobify.Shared.Helpers
                 RegexOptions.Compiled);
 
         private static bool isInvalidEmail = false;
+
+        public static bool IsConnString(this string value)
+        {
+            CloudStorageAccount account;
+
+            return CloudStorageAccount.TryParse(value, out account);
+        }
 
         public static bool IsLocalPath(this string value)
         {
@@ -173,9 +181,6 @@ namespace Blobify.Shared.Helpers
             if (string.IsNullOrWhiteSpace(value))
                 return false;
 
-            if (value.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
-                return false;
-
             try
             {
                 new FileInfo(value);
@@ -202,9 +207,6 @@ namespace Blobify.Shared.Helpers
         public static bool IsFolderName(this string value, bool mustBeRooted = true)
         {
             if (string.IsNullOrWhiteSpace(value))
-                return false;
-
-            if (value.IndexOfAny(Path.GetInvalidPathChars()) != -1)
                 return false;
 
             try

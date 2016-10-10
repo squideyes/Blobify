@@ -133,7 +133,7 @@
     <value>/SOURCE:C:\Windows /REGEX:[a- /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN</value>
   </data>
   <data name="BadSource" xml:space="preserve">
-    <value>/SOURCE:PathDoesn'tExist /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN</value>
+    <value>/SOURCE:BadPath&lt; /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN</value>
   </data>
   <data name="GoodBlobifyWithAllOptions" xml:space="preserve">
     <value>/SOURCE:C:\Windows /REGEX:.txt$ /RECURSE /CONTAINER:files /PATH:AAA/BBB /LOGLEVEL:WARN</value>
