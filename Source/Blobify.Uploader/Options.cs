@@ -1,8 +1,8 @@
 ﻿using Blobify.Shared.Helpers;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
-using System;
 using System.IO;
+using System.Xml.Linq;
 
 namespace Blobify.Uploader
 {
@@ -32,6 +32,11 @@ namespace Blobify.Uploader
             "The \"local-path\" within /CONTAINER to upload the blobified files to.  If ommited then the blobified files will be uploaded to the root of /CONTAINER. NOTE: /PATH will be converted to upper-case, by convention, and created on the fly if nescessary.")]
         [LocalPath("PATH")]
         public string LocalPath { get; set; }
+
+        [Option("ZIPRATIOS", "file", 0, false,
+            "An XML file that contains default extension-specific file compression ratios to optimize the upload process.  If ommited, a set of default compression-ratios will be used.")]
+        [FileName]
+        public string ZipRatios { get; set; }
 
         [Option("CONN", "string", 1, true,
             "The Storage connection-string associated with /CONTAINER. If a /CONN was previously saved to the local machine, it will be overwritten.  In any case, the /CONN will be persisted to the local machine using DPAPI security.")]
@@ -79,6 +84,9 @@ namespace Blobify.Uploader
             if (LocalPath != null)
                 sb.Append($"/PATH:{LocalPath} ");
 
+            if (ZipRatios != null)
+                sb.Append($"/ZIPRATIOS: {ZipRatios}");
+
             if (ConnString != null)
                 sb.Append($"/CONN:{ConnString}");
 
@@ -105,6 +113,9 @@ namespace Blobify.Uploader
             if (LocalPath != null)
                 return NotOmmited(nameof(LocalPath));
 
+            if (ZipRatios != null)
+                return NotOmmited(nameof(ZipRatios));
+
             return ValidationResult.Success;
         }
 
@@ -120,6 +131,17 @@ namespace Blobify.Uploader
             {
                 throw new DirectoryNotFoundException(
                     "The \"SOURCE\" directory could not be found!");
+            }
+
+            if (ZipRatios != null)
+            {
+                if (!File.Exists(ZipRatios))
+                {
+                    throw new FileNotFoundException(
+                        "The \"ZipRatios\" file could not be found!");
+                }
+
+                XDocument.Load(ZipRatios);
             }
         }
 
