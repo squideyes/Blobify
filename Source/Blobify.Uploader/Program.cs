@@ -8,12 +8,14 @@ using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
 using Nito.AsyncEx;
 using NLog;
+using System.Linq;
 using SafeConfig;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.IO.Compression;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -75,8 +77,9 @@ namespace Blobify.Uploader
             {
                 logger.Debug("Kicking off the Blobify process");
 
-                Environment.ExitCode =
-                    (int)AsyncContext.Run(() => DoWork(args));
+                AsyncContext.Run(() => DoWork(options));
+
+                Environment.ExitCode = (int)ExitCode.Success;
             }
             catch (Exception error)
             {
@@ -120,181 +123,207 @@ namespace Blobify.Uploader
             return ArgsParser<Options>.Parse(string.Join(" ", lines));
         }
 
-        private static async Task<ExitCode> DoWork(string[] args)
+        private static async Task DoWork(Options options)
         {
-            return ExitCode.Success;
-
-            //var options = parser.Parse(args);
-
-            //if (options == null)
-            //    parser.ShowHelp();
-            //else if (options.NoConnString == true)
-            //    DeleteConnString();
-            //else if (!string.IsNullOrWhiteSpace(options.ConnString))
-            //    SaveConnString(options);
-            //else
-            //    await ZipUploadAndDeploy(options);
+            if (options.NoConnString == true)
+                DeleteConnString();
+            else if (!string.IsNullOrWhiteSpace(options.ConnString))
+                SaveConnString(options);
+            else
+                await ZipAndUpload(options);
         }
 
-        //private static async Task ZipUploadAndDeploy(Options options)
-        //{
-        //    CloudTable logTable = null;
-        //    Logger logger = null;
+        private static List<FileInfo> GetFileInfos(Options options)
+        {
+            var fileNames = Directory.GetFiles(
+                options.Source, "*.*", options.Recurse == true ?
+                SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
 
-        //    try
-        //    {
-        //        var startedOn = DateTime.UtcNow;
+            var fileInfos = new List<FileInfo>();
 
-        //        ////////////////////////////////////////////////////////////////
+            if (options.Regex == null)
+            {
+                fileInfos.AddRange(fileNames.Select(f => new FileInfo(f)));
+            }
+            else
+            {
+                var regex = new Regex(options.Regex, RegexOptions.IgnoreCase |
+                    RegexOptions.IgnorePatternWhitespace);
 
-        //        var connString = new ConfigManager()
-        //            .AtFolder(Properties.Settings.Default.SettingsFolder)
-        //            //.WithCurrentUserScope()  // discusss issues with team
-        //            .Load()
-        //            .Get<string>(CONNSTRING);
+                foreach (var fileName in fileNames)
+                {
+                    var localPath = fileName.Substring(options.Source.Length);
 
-        //        if (connString == null)
-        //            throw new Exception("A deployment may not be kicked off before a connection string is first saved!");
+                    if (regex.IsMatch(localPath))
+                        fileInfos.Add(new FileInfo(fileName));
+                }
+            }
 
-        //        var account = CloudStorageAccount.Parse(connString);
+            return fileInfos;
+        }
 
-        //        var blobClient = account.CreateCloudBlobClient();
+        private static async Task ZipAndUpload(Options options)
+        {
+            var fileInfos = GetFileInfos(options);
 
-        //        var tableClient = account.CreateCloudTableClient();
 
-        //        var cts = new CancellationTokenSource();
+            //CloudTable logTable = null;
+            //Logger logger = null;
 
-        //        ////////////////////////////////////////////////////////////////
+            //try
+            //{
+            //    var startedOn = DateTime.UtcNow;
 
-        //        logger = new Logger(typeof(Program), account, cts,
-        //            Properties.Settings.Default.MinSeverity);
+            //    ////////////////////////////////////////////////////////////////
 
-        //        //logger.LogToConsole(Severity.Info,
-        //        //    $"Deploying \"{options.SourcePath}\\*.*\"");
+            //    var connString = new ConfigManager()
+            //        .AtFolder(Properties.Settings.Default.SettingsFolder)
+            //        //.WithCurrentUserScope()  // discusss issues with team
+            //        .Load()
+            //        .Get<string>(CONNSTRING);
 
-        //        await logger.Init();
+            //    if (connString == null)
+            //        throw new Exception("A deployment may not be kicked off before a connection string is first saved!");
 
-        //        ////////////////////////////////////////////////////////////////
+            //    var account = CloudStorageAccount.Parse(connString);
 
-        //        //var zipFileContainer = await CreateContainer(logger,
-        //        //    blobClient, options.AppId.ToString().ToLower(), logTable);
+            //    var blobClient = account.CreateCloudBlobClient();
 
-        //        ////////////////////////////////////////////////////////////////
+            //    var tableClient = account.CreateCloudTableClient();
 
-        //        var deployContolTable = tableClient.GetTableReference(
-        //            WellKnown.ControlTableName);
+            //    var cts = new CancellationTokenSource();
 
-        //        await logger.Log(Severity.Debug,
-        //            CREATING, WellKnown.ControlTableName, "table");
+            //    ////////////////////////////////////////////////////////////////
 
-        //        var wasCreated = await deployContolTable.CreateIfNotExistsAsync();
+            //    logger = new Logger(typeof(Program), account, cts,
+            //        Properties.Settings.Default.MinSeverity);
 
-        //        await logger.Log(Severity.Debug,
-        //            "The \"{0}\" {1} {2}.", WellKnown.ControlTableName,
-        //            "table", wasCreated ? "was created" : "already exists");
+            //    //logger.LogToConsole(Severity.Info,
+            //    //    $"Deploying \"{options.SourcePath}\\*.*\"");
 
-        //        ////////////////////////////////////////////////////////////////
+            //    await logger.Init();
 
-        //        var zipFileName = Path.Combine(Path.GetTempPath(),
-        //            Guid.NewGuid().ToString("N") + ".zip");
+            //    ////////////////////////////////////////////////////////////////
 
-        //        //await logger.Log(Severity.Debug,
-        //        //    "Zipping \"{0}\\*.*\" into \"{1}\".",
-        //        //    options.SourcePath, zipFileName);
+            //    //var zipFileContainer = await CreateContainer(logger,
+            //    //    blobClient, options.AppId.ToString().ToLower(), logTable);
 
-        //        //ZipFile.CreateFromDirectory(options.SourcePath, zipFileName);
+            //    ////////////////////////////////////////////////////////////////
 
-        //        await logger.Log(Severity.Debug,
-        //            $"The \"{zipFileName}\" archive was created!");
+            //    var deployContolTable = tableClient.GetTableReference(
+            //        WellKnown.ControlTableName);
 
-        //        ////////////////////////////////////////////////////////////////
+            //    await logger.Log(Severity.Debug,
+            //        CREATING, WellKnown.ControlTableName, "table");
 
-        //        //var blob = zipFileContainer.GetBlockBlobReference(
-        //        //    options.BuildName + ".zip");
+            //    var wasCreated = await deployContolTable.CreateIfNotExistsAsync();
 
-        //        //await logger.Log(Severity.Debug,
-        //        //    $"Uploading the \"{zipFileName}\" archive to \"{blob.Name}\".");
+            //    await logger.Log(Severity.Debug,
+            //        "The \"{0}\" {1} {2}.", WellKnown.ControlTableName,
+            //        "table", wasCreated ? "was created" : "already exists");
 
-        //        //await blob.UploadFromFileAsync(zipFileName);
+            //    ////////////////////////////////////////////////////////////////
 
-        //        //await logger.Log(Severity.Info,
-        //        //    "The \"{0}\" blob was uploaded to the \"{1}\" container.",
-        //        //    blob.Name, zipFileContainer.Name);
+            //    var zipFileName = Path.Combine(Path.GetTempPath(),
+            //        Guid.NewGuid().ToString("N") + ".zip");
 
-        //        ////////////////////////////////////////////////////////////////
+            //    //await logger.Log(Severity.Debug,
+            //    //    "Zipping \"{0}\\*.*\" into \"{1}\".",
+            //    //    options.SourcePath, zipFileName);
 
-        //        File.Delete(zipFileName);
+            //    //ZipFile.CreateFromDirectory(options.SourcePath, zipFileName);
 
-        //        await logger.Log(Severity.Debug,
-        //            $"The temporary \"{zipFileName}\" archive was deleted.");
+            //    await logger.Log(Severity.Debug,
+            //        $"The \"{zipFileName}\" archive was created!");
 
-        //        ////////////////////////////////////////////////////////////////
+            //    ////////////////////////////////////////////////////////////////
 
-        //        //await logger.Log(Severity.Debug,
-        //        //    "Upserting \"{0}\" table entries for \"{1}\".",
-        //        //    options.AppId, string.Join(",", options.HostNames));
+            //    //var blob = zipFileContainer.GetBlockBlobReference(
+            //    //    options.BuildName + ".zip");
 
-        //        //for (int i = 0; i < options.HostNames.Count; i++)
-        //        //{
-        //        //    var entity = new ControlEntity()
-        //        //    {
-        //        //        Timestamp = DateTime.UtcNow,
-        //        //        PartitionKey = options.HostNames[i],
-        //        //        RowKey = options.AppId.ToString(),
-        //        //        BlobName = options.BuildName + ".zip",
-        //        //        AlertTos = string.Join(";", options.AlertTos),
-        //        //        Status = (int)(i == options.HostNames.Count - 1 ?
-        //        //            DeployStatus.DeployNow : DeployStatus.CanDeploy)
-        //        //    };
+            //    //await logger.Log(Severity.Debug,
+            //    //    $"Uploading the \"{zipFileName}\" archive to \"{blob.Name}\".");
 
-        //        //    await deployContolTable.ExecuteAsync(
-        //        //        TableOperation.InsertOrReplace(entity));
+            //    //await blob.UploadFromFileAsync(zipFileName);
 
-        //        //    await logger.Log(Severity.Info,
-        //        //        "Upserted an \"{0}\" entry into the \"{1}\" table for \"{2}\".",
-        //        //        entity.RowKey, WellKnown.ControlTableName, entity.PartitionKey);
-        //        //}
+            //    //await logger.Log(Severity.Info,
+            //    //    "The \"{0}\" blob was uploaded to the \"{1}\" container.",
+            //    //    blob.Name, zipFileContainer.Name);
 
-        //        ////////////////////////////////////////////////////////////////
+            //    ////////////////////////////////////////////////////////////////
 
-        //        await logger.Log(Severity.Debug,
-        //            $"Elapsed: {DateTime.UtcNow - startedOn}");
-        //    }
-        //    catch (Exception error)
-        //    {
-        //        try
-        //        {
-        //            await logger.Log(error);
-        //        }
-        //        catch (Exception loggingError)
-        //        {
-        //            logger.LogToConsole(Severity.Failure,
-        //                "The \"{0}\" error couldn't be logged.  See the \"{1}\" folder for details.",
-        //                error.Message.ToSingleLine(),
-        //                Properties.Settings.Default.FailureLogsPath);
+            //    File.Delete(zipFileName);
 
-        //            var info = new FailureInfo()
-        //            {
-        //                Options = options,
-        //                OriginalError = error,
-        //                LoggingError = loggingError
-        //            };
+            //    await logger.Log(Severity.Debug,
+            //        $"The temporary \"{zipFileName}\" archive was deleted.");
 
-        //            var fileName = Path.Combine(
-        //                Properties.Settings.Default.FailureLogsPath,
-        //                string.Format("{0}_Failure_{1:yyyyMMdd_HHmmssff}.json",
-        //                typeof(Program).Namespace, DateTime.UtcNow));
+            //    ////////////////////////////////////////////////////////////////
 
-        //            if (!Directory.Exists(Properties.Settings.Default.FailureLogsPath))
-        //                Directory.CreateDirectory(Properties.Settings.Default.FailureLogsPath);
+            //    //await logger.Log(Severity.Debug,
+            //    //    "Upserting \"{0}\" table entries for \"{1}\".",
+            //    //    options.AppId, string.Join(",", options.HostNames));
 
-        //            using (var writer = new StreamWriter(fileName))
-        //                writer.Write(JsonConvert.SerializeObject(info, Formatting.Indented));
-        //        }
+            //    //for (int i = 0; i < options.HostNames.Count; i++)
+            //    //{
+            //    //    var entity = new ControlEntity()
+            //    //    {
+            //    //        Timestamp = DateTime.UtcNow,
+            //    //        PartitionKey = options.HostNames[i],
+            //    //        RowKey = options.AppId.ToString(),
+            //    //        BlobName = options.BuildName + ".zip",
+            //    //        AlertTos = string.Join(";", options.AlertTos),
+            //    //        Status = (int)(i == options.HostNames.Count - 1 ?
+            //    //            DeployStatus.DeployNow : DeployStatus.CanDeploy)
+            //    //    };
 
-        //        throw;
-        //    }
-        //}
+            //    //    await deployContolTable.ExecuteAsync(
+            //    //        TableOperation.InsertOrReplace(entity));
+
+            //    //    await logger.Log(Severity.Info,
+            //    //        "Upserted an \"{0}\" entry into the \"{1}\" table for \"{2}\".",
+            //    //        entity.RowKey, WellKnown.ControlTableName, entity.PartitionKey);
+            //    //}
+
+            //    ////////////////////////////////////////////////////////////////
+
+            //    await logger.Log(Severity.Debug,
+            //        $"Elapsed: {DateTime.UtcNow - startedOn}");
+            //}
+            //catch (Exception error)
+            //{
+            //    try
+            //    {
+            //        await logger.Log(error);
+            //    }
+            //    catch (Exception loggingError)
+            //    {
+            //        logger.LogToConsole(Severity.Failure,
+            //            "The \"{0}\" error couldn't be logged.  See the \"{1}\" folder for details.",
+            //            error.Message.ToSingleLine(),
+            //            Properties.Settings.Default.FailureLogsPath);
+
+            //        var info = new FailureInfo()
+            //        {
+            //            Options = options,
+            //            OriginalError = error,
+            //            LoggingError = loggingError
+            //        };
+
+            //        var fileName = Path.Combine(
+            //            Properties.Settings.Default.FailureLogsPath,
+            //            string.Format("{0}_Failure_{1:yyyyMMdd_HHmmssff}.json",
+            //            typeof(Program).Namespace, DateTime.UtcNow));
+
+            //        if (!Directory.Exists(Properties.Settings.Default.FailureLogsPath))
+            //            Directory.CreateDirectory(Properties.Settings.Default.FailureLogsPath);
+
+            //        using (var writer = new StreamWriter(fileName))
+            //            writer.Write(JsonConvert.SerializeObject(info, Formatting.Indented));
+            //    }
+
+            //    throw;
+            //}
+        }
 
         //private static async Task<CloudBlobContainer> CreateContainer(
         //    Logger logger, CloudBlobClient blobClient,
@@ -315,27 +344,27 @@ namespace Blobify.Uploader
         //    return container;
         //}
 
-        //private static void SaveConnString(Options options)
-        //{
-        //    new ConfigManager()
-        //        .WithLocalMachineScope()
-        //        .Set(WellKnown.ConnStringName, options.ConnString)
-        //        .AtFolder(Properties.Settings.Default.SettingsFolder)
-        //        .Save();
+        private static void SaveConnString(Options options)
+        {
+            //new ConfigManager()
+            //    .WithLocalMachineScope()
+            //    .Set(WellKnown.ConnStringName, options.ConnString)
+            //    .AtFolder(Properties.Settings.Default.SettingsFolder)
+            //    .Save();
 
-        //    Console.WriteLine("The Azure Storage connection string was saved!");
-        //}
+            Console.WriteLine("The Azure Storage connection string was saved!");
+        }
 
-        //private static void DeleteConnString()
-        //{
-        //    if (Directory.Exists(
-        //        Properties.Settings.Default.SettingsFolder))
-        //    {
-        //        Directory.Delete(
-        //            Properties.Settings.Default.SettingsFolder, true);
-        //    }
+        private static void DeleteConnString()
+        {
+            //if (Directory.Exists(
+            //    Properties.Settings.Default.SettingsFolder))
+            //{
+            //    Directory.Delete(
+            //        Properties.Settings.Default.SettingsFolder, true);
+            //}
 
-        //    Console.WriteLine("The Azure Storage connection string was deleted!");
-        //}
+            Console.WriteLine("The Azure Storage connection string was deleted!");
+        }
     }
 }
