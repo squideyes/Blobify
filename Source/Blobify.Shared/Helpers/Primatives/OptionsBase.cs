@@ -4,8 +4,8 @@
     {
         public LogLevel LogLevel { get; set; } = LogLevel.Info;
 
-        [FileName("PARAMS", false)]
-        public string ParamsFile { get; set; }
+        [FileName("ARGS", false)]
+        public string ArgsFile { get; set; }
 
         protected virtual void Normalize()
         {

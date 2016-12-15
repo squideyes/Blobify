@@ -1,35 +1,19 @@
 ﻿using Blobify.Shared;
-using Blobify.Shared.Constants;
 using Blobify.Shared.Helpers;
-using Blobify.Shared.Models;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
-using Microsoft.WindowsAzure.Storage.Table;
-using Newtonsoft.Json;
 using Nito.AsyncEx;
 using NLog;
-using System.Linq;
-using SafeConfig;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
-using System.IO.Compression;
+using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Blobify.Uploader
 {
     class Program
     {
-        private class FailureInfo
-        {
-            public Options Options { get; set; }
-            public Exception OriginalError { get; set; }
-            public Exception LoggingError { get; set; }
-        }
-
         private const string CREATING =
             "Creating the \"{0}\" {1}, if it doesn't already exist.";
 
@@ -39,73 +23,97 @@ namespace Blobify.Uploader
         {
             Options options;
 
-            try
+            var exitCode = GetOptions(args, out options);
+
+            if (exitCode != ExitCode.Success)
             {
-                if (args.Length == 0)
-                {
-                    logger.Warn("The program was invoked without command-line arguments.");
+                logger.Warn(exitCode.GetDescription());
 
-                    Console.WriteLine();
+                Console.WriteLine();
 
-                    ShowHelpAndSetExitCode(null, ExitCode.NoArgs);
-
-                    return;
-                }
-
-                options = ArgsParser<Options>.Parse(string.Join(" ", args));
-
-                if (options.ParamsFile != null)
-                    options = LoadParamsFile(options.ParamsFile);
-
-                options.ValidateDependencies();
-
-                logger.Info($"Parsed {nameof(Options)}: {options}");
-            }
-            catch (Exception error)
-            {
-                logger.Error("InitError: " + error);
-
-                ShowHelpAndSetExitCode(error, ExitCode.InitError);
+                ArgsParser<Options>.ShowHelp();
 
                 return;
             }
 
-            Console.CancelKeyPress += (s, e) =>
-                Environment.ExitCode = (int)ExitCode.Cancelled;
-
-            try
-            {
-                logger.Debug("Kicking off the Blobify process");
-
-                AsyncContext.Run(() => DoWork(options));
-
-                Environment.ExitCode = (int)ExitCode.Success;
-            }
-            catch (Exception error)
-            {
-                logger.Error("ProcessingError: " + error);
-
-                Environment.ExitCode = (int)ExitCode.ProcessingError;
-            }
-
-            Console.WriteLine();
-            Console.Write("Press any key to terminate the program...");
-
-            Console.ReadKey(true);
+            logger.Info($"Parsed {nameof(Options)}: {options}");
         }
 
-        private static void ShowHelpAndSetExitCode(Exception error, ExitCode exitCode)
+        private static ExitCode GetOptions(string[] args, out Options options)
         {
-            ArgsParser<Options>.ShowHelp(error);
+            options = null;
 
-            Environment.ExitCode = (int)exitCode;
+            Options parsed = null;
+
+            if (args.Length == 0)
+                return ExitCode.NoArgs;
+
+            if (!Safe.Run(() => parsed = ArgsParser<Options>.Parse(string.Join(" ", args))))
+                return ExitCode.BadArgs;
+
+            if (parsed.ArgsFile != null)
+            {
+                if (!File.Exists(parsed.ArgsFile))
+                    return ExitCode.NoArgsFile;
+
+                if (!Safe.Run(() => parsed = LoadArgsFile(parsed.ArgsFile)))
+                    return ExitCode.BadArgsFile;
+            }
+
+            if (!Safe.Run(parsed, o =>
+                Validator.ValidateObject(o, new ValidationContext(o), true)))
+            {
+                return ExitCode.BadArgs;
+            }
+
+            if (!Safe.Run(parsed, o => o.ValidateDependencies()))
+                return ExitCode.BadDependencies;
+
+            options = parsed;
+
+            return ExitCode.Success;
+
+            //try
+            //{
+
+
+
+
+
+
+            //    }
+
+            //    try
+            //    {
+            //        logger.Debug("Kicking off the Blobify process");
+
+            //        AsyncContext.Run(() => DoWork(options));
+
+            //        Environment.ExitCode = (int)ExitCode.Success;
+            //    }
+            //    catch (Exception error)
+            //    {
+            //        logger.Error("ProcessingError: " + error);
+
+            //        Environment.ExitCode = (int)ExitCode.ProcessingError;
+            //    }
+            //}
+            //catch (Exception error)
+            //{
+            //    logger.Error("InitError: " + error);
+
+            //    ShowHelpAndSetExitCode(error, ExitCode.InitError);
+            //}
+
+            //Console.CancelKeyPress += (s, e) =>
+            //    Environment.ExitCode = (int)ExitCode.Cancelled;
         }
 
-        private static Options LoadParamsFile(string paramsFile)
+        private static Options LoadArgsFile(string argsFile)
         {
             var lines = new List<string>();
 
-            using (var reader = new StreamReader(paramsFile))
+            using (var reader = new StreamReader(argsFile))
             {
                 string line;
 
@@ -113,10 +121,8 @@ namespace Blobify.Uploader
                 {
                     line = line.Trim();
 
-                    if (line.StartsWith("//"))
-                        continue;
-
-                    lines.Add(line);
+                    if (!line.StartsWith("//"))
+                        lines.Add(line);
                 }
             }
 

@@ -29,7 +29,11 @@ namespace Blobify.Shared.Helpers
 
         private const int WIDTH = 78;
 
-        public static void ShowHelp(Exception error = null)
+
+        public static void ShowHelp(Exception error) =>
+            ShowHelp(error.Message.ToSingleLine());
+
+        public static void ShowHelp(params string[] errorMessages)
         {
             var options = new List<OptionAttribute>();
 
@@ -47,13 +51,19 @@ namespace Blobify.Shared.Helpers
 
             var sb = new StringBuilder();
 
-            if (error != null)
+            if (errorMessages.Length > 0)
             {
                 sb.AppendLine(new string('=', WIDTH));
-                sb.AppendLine("ERROR:");
 
-                foreach (var line in error.Message.ToSingleLine().Wrap(WIDTH))
-                    sb.AppendLine(line);
+                var suffix = errorMessages.Length == 0 ? "" : "S";
+
+                sb.AppendLine($"ERROR{suffix}:");
+
+                foreach (var message in errorMessages)
+                {
+                    foreach (var line in message.Wrap(WIDTH))
+                        sb.AppendLine(line);
+                }
 
                 sb.AppendLine(new string('=', WIDTH));
             }
@@ -222,7 +232,7 @@ namespace Blobify.Shared.Helpers
                     kind = OptionKind.OptionalKeyValue;
                     helpText = LOGLEVELHELPTEXT;
                 }
-                else if (property.Name == nameof(options.ParamsFile))
+                else if (property.Name == nameof(options.ArgsFile))
                 {
                     token = "PARAMS";
                     kind = OptionKind.OptionalKeyValue;
@@ -285,7 +295,7 @@ namespace Blobify.Shared.Helpers
                 }
                 else if (spec.Type.GetInterface(typeof(IConvertible).FullName) != null)
                 {
-                    SetValue(spec.Property, options, 
+                    SetValue(spec.Property, options,
                         Convert.ChangeType(tv.Value, spec.Type));
                 }
             }

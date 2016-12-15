@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.IO;
 using System.Xml.Linq;
+using System.Collections.Generic;
 
 namespace Blobify.Uploader
 {
@@ -121,7 +122,7 @@ namespace Blobify.Uploader
 
         public override void ValidateDependencies()
         {
-            if ((ParamsFile != null) && !File.Exists(ParamsFile))
+            if ((ArgsFile != null) && !File.Exists(ArgsFile))
             {
                 throw new FileNotFoundException(
                     "The \"PARAMS\" file could not be found!");
@@ -148,7 +149,7 @@ namespace Blobify.Uploader
         public static ValidationResult FinalCheck(
             Options options, ValidationContext context)
         {
-            if (options.ParamsFile != null)
+            if (options.ArgsFile != null)
             {
                 var result = options.ValidateBlobifyOptionsNotSet();
 

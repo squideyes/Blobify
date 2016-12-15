@@ -90,6 +90,9 @@
     <Compile Include="Helpers\Attributes\FolderNameAttribute.cs" />
     <Compile Include="Helpers\Attributes\OptionAttribute.cs" />
     <Compile Include="Helpers\Enums\OptionKind.cs" />
+    <Compile Include="Helpers\Helpers\ArgsHelper.cs" />
+    <Compile Include="Helpers\Helpers\EnumHelper.cs" />
+    <Compile Include="Helpers\Helpers\Safe.cs" />
     <Compile Include="Helpers\Primatives\OptionsBase.cs" />
     <Compile Include="Helpers\Exceptions\BadFieldException.cs" />
     <Compile Include="Helpers\Extenders\AssemblyExtenders.cs" />
